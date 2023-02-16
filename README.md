@@ -34,6 +34,12 @@ Initialize the directory by running the following command:
 $ terraform init
 ```
 
+Create and execution plan by running the following command:
+
+```
+$ terraform plan
+```
+
 ## Creating the infrastructure
 
 Run the following command to select the AWS profile:
