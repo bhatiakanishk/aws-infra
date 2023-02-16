@@ -1,30 +1,38 @@
+# Define the availability zones to use
+variable "availability_zones" {
+  type = list(string)
+  default = [ "us-east-1a", "us-east-1b", "us-east-1c" ]
+}
+
+# Create VPCs
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+  tags = {
+    "Name" = "my-vpc"
+  }
 }
 
-# Create public and private subnets in 3 availability zones
-locals {
-  azs = data.aws_availability_zones.available.names
-}
-
-data "aws_availability_zones" "available" {}
-
+# Create subnets in VPC
+# Create public subnets in 3 availability zones
 resource "aws_subnet" "public_subnet" {
   count = 3
   cidr_block = "10.0.${count.index}.0/24"
   vpc_id = aws_vpc.my_vpc.id
-  availability_zone = element(local.azs, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
     Name = "public-subnet-${count.index}"
   }
 }
 
+# Create private subnets in 3 availability zones
 resource "aws_subnet" "private_subnet" {
   count = 3
   cidr_block = "10.0.${count.index + 10}.0/24"
   vpc_id = aws_vpc.my_vpc.id
-  availability_zone = element(local.azs, count.index)
+  availability_zone = element(var.availability_zones, count.index)
 
   tags = {
     Name = "private-subnet-${count.index}"
