@@ -1,6 +1,5 @@
 variable "ami_id" {
   description = "The ID of the AMI to use for the EC2 instance"
-  default     = "ami-0fb8984d13804b809"
 }
 
 resource "aws_instance" "my_ec2_instance" {
