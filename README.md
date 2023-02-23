@@ -65,3 +65,5 @@ $ terraform destroy
 ## AWS VPC Console
 
 Login to the AWS account and go to the VPC tab to check the infrastructure
+
+ ssh -i ~/.ssh/ec2 ec2-user@44.201.238.136
