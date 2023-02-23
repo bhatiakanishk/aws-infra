@@ -1,13 +1,13 @@
 # Define the availability zones to use
 variable "availability_zones" {
-  type = list(string)
-  default = [ "us-east-1a", "us-east-1b", "us-east-1c" ]
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 # Create VPCs
 resource "aws_vpc" "my_vpc" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_support = true
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
     "Name" = "my-vpc"
@@ -17,9 +17,9 @@ resource "aws_vpc" "my_vpc" {
 # Create subnets in VPC
 # Create public subnets in 3 availability zones
 resource "aws_subnet" "public_subnet" {
-  count = 3
-  cidr_block = "10.0.${count.index}.0/24"
-  vpc_id = aws_vpc.my_vpc.id
+  count             = 3
+  cidr_block        = "10.0.${count.index}.0/24"
+  vpc_id            = aws_vpc.my_vpc.id
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
@@ -29,9 +29,9 @@ resource "aws_subnet" "public_subnet" {
 
 # Create private subnets in 3 availability zones
 resource "aws_subnet" "private_subnet" {
-  count = 3
-  cidr_block = "10.0.${count.index + 10}.0/24"
-  vpc_id = aws_vpc.my_vpc.id
+  count             = 3
+  cidr_block        = "10.0.${count.index + 10}.0/24"
+  vpc_id            = aws_vpc.my_vpc.id
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
@@ -63,8 +63,8 @@ resource "aws_route_table" "public_rt" {
 }
 
 resource "aws_route_table_association" "public_rta" {
-  count = 3
-  subnet_id = element(aws_subnet.public_subnet.*.id, count.index)
+  count          = 3
+  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
   route_table_id = aws_route_table.public_rt.id
 }
 
@@ -78,7 +78,7 @@ resource "aws_route_table" "private_rt" {
 }
 
 resource "aws_route_table_association" "private_rta" {
-  count = 3
-  subnet_id = element(aws_subnet.private_subnet.*.id, count.index)
+  count          = 3
+  subnet_id      = element(aws_subnet.private_subnet.*.id, count.index)
   route_table_id = aws_route_table.private_rt.id
 }
