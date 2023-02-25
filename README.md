@@ -51,7 +51,7 @@ $ export AWS_PROFILE={PROFILE_NAME}
 Create the infrastructure by running the following command:
 
 ```
-$ terraform apply
+$ terraform apply --var-file="variable.tfvars" 
 ```
 
 ## Destroying the infrastructure
@@ -66,4 +66,37 @@ $ terraform destroy
 
 Login to the AWS account and go to the VPC tab to check the infrastructure
 
- ssh -i ~/.ssh/ec2 ec2-user@44.201.238.136
+## AWS Instances Console
+
+Copy the Public IPv4 DNS to check the API requests
+
+## Postman
+
+Postman needs to be installed for testing the API calls
+```
+http://{Public IPv4 DNS}:8080/{requiredRequest}
+```
+
+Depending on the type of API call, change the HTTP requests
+
+Use JSON format in the body of Postman
+
+Sample to add new user:
+```
+{
+    "username": "login@gmail.com",
+    "first_name": "Kanishk",
+    "last_name": "Bhatia",
+    "password": "12345"
+}
+
+Sample to add new product:
+
+{
+    "name": "Galaxy S22",
+    "description": "Smartphone",
+    "sku": "1",
+    "manufacturer": "Samsung",
+    "quantity": 50
+}
+```
