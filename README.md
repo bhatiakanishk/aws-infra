@@ -40,6 +40,18 @@ Create and execution plan by running the following command:
 $ terraform plan
 ```
 
+## Variables file
+
+Create a variable.tfvars file and add the following code to it:
+
+```
+region = "us-east-1"
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+ami_id = "ami-0123456789"
+```
+
+Change the values as per the requirement
+
 ## Creating the infrastructure
 
 Run the following command to select the AWS profile:
