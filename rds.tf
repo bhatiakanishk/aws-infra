@@ -14,27 +14,30 @@ resource "aws_db_parameter_group" "db_parameter_group" {
   description = "Custom parameter group for CSYE6225 RDS instances"
 }
 
-
 # Create a new subnet group containing the private subnets where you want to deploy your RDS instance
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "csye6225-db-subnet-group"
   subnet_ids = aws_subnet.private_subnet.*.id
 }
 
-# Create a new DB security group
-resource "aws_security_group" "db_security_group" {
+resource "aws_security_group" "database_security_group" {
   name_prefix = "csye6225-db-security-group"
+  description = "Security group for RDS instances"
   vpc_id      = aws_vpc.my_vpc.id
-}
 
-# Add an ingress rule to allow traffic from the application security group on port 3306
-resource "aws_security_group_rule" "db_security_group_ingress" {
-  type              = "ingress"
-  from_port         = 3306
-  to_port           = 3306
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.db_security_group.id
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.app_security_group.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # Create the RDS instance
@@ -49,7 +52,7 @@ resource "aws_db_instance" "rds_instance" {
   password               = "Kanu1327"
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
-  vpc_security_group_ids = [aws_security_group.app_security_group.id]
+  vpc_security_group_ids = [aws_security_group.app_security_group.id, aws_security_group.database_security_group.id]
   publicly_accessible    = false
   skip_final_snapshot    = true
 }

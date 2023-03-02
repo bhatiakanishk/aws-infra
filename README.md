@@ -86,7 +86,7 @@ Copy the Public IPv4 DNS to check the API requests
 
 Postman needs to be installed for testing the API calls
 ```
-http://{Public IPv4 DNS}:8080/{requiredRequest}
+http://{Public IPv4 address}:8080/{requiredRequest}
 ```
 
 Depending on the type of API call, change the HTTP requests

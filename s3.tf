@@ -8,7 +8,6 @@ resource "aws_s3_bucket" "private_bucket" {
     transition {
       days          = 30
       storage_class = "STANDARD_IA"
-      # status        = "Enabled"
     }
   }
 
@@ -43,7 +42,10 @@ resource "aws_iam_policy" "s3_access_policy" {
       {
         Effect = "Allow"
         Action = [
-          "s3:*"
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
         ]
         Resource = [
           "${aws_s3_bucket.private_bucket.arn}",
