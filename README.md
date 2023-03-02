@@ -10,7 +10,7 @@ A fork is made from the organization called kanishkbhatia/ aws-infra. The reposi
 Install AWS on Linux by running the following command:
 
 ```
-$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
 ```
@@ -18,40 +18,52 @@ sudo ./aws/install
 Configure AWS by running the following command:
 
 ```
-$ aws configure
+aws configure
 ```
 
 ### Terraform
 Install Terraform on Linux by running the following command:
 
 ```
-$ sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
 ```
 
 Initialize the directory by running the following command:
 
 ```
-$ terraform init
+terraform init
 ```
 
 Create and execution plan by running the following command:
 
 ```
-$ terraform plan
+terraform plan
 ```
+
+## Variables file
+
+Create a variable.tfvars file and add the following code to it:
+
+```
+region = "us-east-1"
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+ami_id = "ami-0123456789"
+```
+
+Change the values as per the requirement
 
 ## Creating the infrastructure
 
 Run the following command to select the AWS profile:
 
 ```
-$ export AWS_PROFILE={PROFILE_NAME}
+export AWS_PROFILE={PROFILE_NAME}
 ```
 
 Create the infrastructure by running the following command:
 
 ```
-$ terraform apply --var-file="variable.tfvars" 
+terraform apply --var-file="variable.tfvars" --auto-approve
 ```
 
 ## Destroying the infrastructure
@@ -59,7 +71,7 @@ $ terraform apply --var-file="variable.tfvars"
 Destroy the infrastructure by running the following command:
 
 ```
-$ terraform destroy
+terraform destroy --auto-approve
 ```
 
 ## AWS VPC Console
@@ -74,7 +86,7 @@ Copy the Public IPv4 DNS to check the API requests
 
 Postman needs to be installed for testing the API calls
 ```
-http://{Public IPv4 DNS}:8080/{requiredRequest}
+http://{Public IPv4 address}:8080/{requiredRequest}
 ```
 
 Depending on the type of API call, change the HTTP requests
@@ -99,4 +111,10 @@ Sample to add new product:
     "manufacturer": "Samsung",
     "quantity": 50
 }
+```
+
+## To SSH into local machine
+
+```
+ssh -i ~/.ssh/ec2 ec2-user@{Public IPv4 address}
 ```
