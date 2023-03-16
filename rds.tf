@@ -6,6 +6,15 @@ variable "database_engine" {
 variable "database_engine_version" {
   default = "10.5"
 }
+variable "database_name" {
+  default = "csye6225"
+}
+variable "database_username" {
+  default = "csye6225"
+}
+variable "database_password" {
+  default = "Kanu1327"
+}
 
 # Create a new DB parameter group
 resource "aws_db_parameter_group" "db_parameter_group" {
@@ -47,12 +56,12 @@ resource "aws_db_instance" "rds_instance" {
   engine                 = var.database_engine
   engine_version         = var.database_engine_version
   instance_class         = "db.t3.micro"
-  name                   = "csye6225"
-  username               = "csye6225"
-  password               = "Kanu1327"
+  name                   = var.database_name
+  username               = var.database_username
+  password               = var.database_password
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
-  vpc_security_group_ids = [aws_security_group.app_security_group.id, aws_security_group.database_security_group.id]
+  vpc_security_group_ids = [aws_security_group.database_security_group.id]
   publicly_accessible    = false
   skip_final_snapshot    = true
 }

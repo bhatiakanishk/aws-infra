@@ -11,14 +11,6 @@ variable "sql_password" {
   default = "Kanu1327"
 }
 
-variable "aws_accesskey" {
-  default = "AKIAQCT5GEIRYB24L5KC"
-}
-
-variable "aws_secretkey" {
-  default = "gViouWuRm8vmk4CR6AQ6F2ZInQJAWOdNGbQKdYB0"
-}
-
 resource "aws_instance" "my_ec2_instance" {
   count                       = 1
   ami                         = var.ami_id
@@ -26,6 +18,7 @@ resource "aws_instance" "my_ec2_instance" {
   vpc_security_group_ids      = [aws_security_group.app_security_group.id]
   subnet_id                   = aws_subnet.public_subnet[0].id
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
   key_name                    = "ec2"
   user_data                   = <<EOF
 #!/bin/bash
@@ -34,8 +27,6 @@ echo "SQLPASSWORD="${var.sql_password}"" >> /home/ec2-user/webapp/.env
 echo "DATABASENAME=csye6225" >> /home/ec2-user/webapp/.env
 echo "SQLHOSTNAME="${aws_db_instance.rds_instance.address}"" >> /home/ec2-user/webapp/.env
 echo "BUCKETNAME="${aws_s3_bucket.private_bucket.bucket}"" >> /home/ec2-user/webapp/.env
-echo "AWS_ACCESS_KEY_ID="${var.aws_accesskey}"" >> /home/ec2-user/webapp/.env
-echo "AWS_SECRET_ACCESS_KEY="${var.aws_secretkey}"" >> /home/ec2-user/webapp/.env
 echo "AWS_REGION="${var.region}"" >> /home/ec2-user/webapp/.env
 
 cd /home/ec2-user/webapp/

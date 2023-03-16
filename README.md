@@ -48,6 +48,7 @@ Create a variable.tfvars file and add the following code to it:
 region = "us-east-1"
 availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 ami_id = "ami-0123456789"
+zone_name = "domainName.tld"
 ```
 
 Change the values as per the requirement
@@ -66,9 +67,9 @@ Create the infrastructure by running the following command:
 terraform apply --var-file="variable.tfvars" --auto-approve
 ```
 
-## Destroying the infrastructure
+## Destroying all services 
 
-Destroy the infrastructure by running the following command:
+Destroy the EC2 instance, RDS, S3 Bucket, IAM Role & Policy, Route 53, VPCs, Subnets, Route Tables and Internet Gateway by running the following command:
 
 ```
 terraform destroy --auto-approve
@@ -87,6 +88,10 @@ Copy the Public IPv4 DNS to check the API requests
 Postman needs to be installed for testing the API calls
 ```
 http://{Public IPv4 address}:8080/{requiredRequest}
+
+or
+
+http://{domainName.tld}:8080/{requiredRequest}
 ```
 
 Depending on the type of API call, change the HTTP requests
@@ -94,6 +99,7 @@ Depending on the type of API call, change the HTTP requests
 Use JSON format in the body of Postman
 
 Sample to add new user:
+
 ```
 {
     "username": "login@gmail.com",
@@ -101,9 +107,11 @@ Sample to add new user:
     "last_name": "Bhatia",
     "password": "12345"
 }
+```
 
 Sample to add new product:
 
+```
 {
     "name": "Galaxy S22",
     "description": "Smartphone",
@@ -112,6 +120,14 @@ Sample to add new product:
     "quantity": 50
 }
 ```
+
+To upload an image:
+
+1. Select form-data in the body
+
+2. Change the key type to "file"
+
+3. Type "image" in the key and select the file to be uploaded in the value
 
 ## To SSH into local machine
 
