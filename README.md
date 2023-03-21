@@ -72,7 +72,7 @@ terraform apply --var-file="variable.tfvars" --auto-approve
 Destroy the EC2 instance, RDS, S3 Bucket, IAM Role & Policy, Route 53, VPCs, Subnets, Route Tables and Internet Gateway by running the following command:
 
 ```
-terraform destroy --auto-approve
+terraform destroy --var-file="variable.tfvars" --auto-approve
 ```
 
 ## AWS VPC Console
