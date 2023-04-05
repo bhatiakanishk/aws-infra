@@ -87,7 +87,7 @@ resource "aws_iam_role_policy_attachment" "s3_access_attachment" {
 
 // Create instance profile for the EC2 instance with the assigned IAM role
 
-resource "aws_iam_instance_profile" "instance_profile" {
-  name = "instance_profile"
+resource "aws_iam_instance_profile" "instance_profile_s3" {
+  name = "instance_profile_s3"
   role = aws_iam_role.ec2_instance_role.name
 }
