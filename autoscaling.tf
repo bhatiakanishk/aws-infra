@@ -1,13 +1,18 @@
-// Autoscaling Launch Configuration
+variable "ami_id" {
+    description = "The ID of the AMI to use for the EC2 instance"
+    default     = ""
+}
 
-resource "aws_launch_configuration" "asg_launch_config" {
-    image_id                    = var.ami_id
-    instance_type               = "t2.micro"
-    key_name                    = "ec2-instance"
-    associate_public_ip_address = true
-    security_groups             = [aws_security_group.app_security_group.id]
-    iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
-    user_data                   = <<EOF
+variable "sql_user" {
+    default = "csye6225"
+}
+
+variable "sql_password" {
+    default = "Kanu1327"
+}
+
+data "template_file" "user_data" {
+    template = <<EOF
 #!/bin/bash
 echo "SQLUSER="${var.sql_user}"" >> /home/ec2-user/webapp/.env
 echo "SQLPASSWORD="${var.sql_password}"" >> /home/ec2-user/webapp/.env
@@ -23,33 +28,56 @@ sudo pm2 startup systemd
 sudo pm2 save
 sudo pm2 list
 EOF
+}
 
-    root_block_device {
-        volume_type           = "gp2"
-        volume_size           = 50
-        delete_on_termination = true
+// Autoscaling Launch Configuration
+
+resource "aws_launch_template" "asg_launch_config" {
+    image_id                    = var.ami_id
+    instance_type               = "t2.micro"
+    key_name                    = "ec2-instance"
+    user_data = base64encode(data.template_file.user_data.rendered)
+    iam_instance_profile {
+        name = aws_iam_instance_profile.instance_profile_s3.name
     }
-    ebs_block_device {
-        device_name           = "/dev/sdb"
-        volume_type           = "gp2"
-        volume_size           = 20
-        delete_on_termination = true
+    network_interfaces {
+        associate_public_ip_address = true
+        security_groups             = [aws_security_group.app_security_group.id]
+    }
+    block_device_mappings {
+        device_name = "/dev/sda1"
+        ebs {
+            volume_size             = 50
+            volume_type             = "gp2"
+            delete_on_termination   = true
+        }
     }
 }
 
 resource "aws_autoscaling_group" "asg" {
-    name                 = "my-asg"
-    launch_configuration = aws_launch_configuration.asg_launch_config.name
-    min_size             = 1
-    max_size             = 3
-    desired_capacity     = 1
-    vpc_zone_identifier  = [aws_subnet.public_subnet[0].id]
+    name                    = "my-asg"
+    launch_template {
+        id          = aws_launch_template.asg_launch_config.id
+        version     = "$Latest"
+    }
+    min_size                = 1
+    max_size                = 3
+    desired_capacity        = 1
+    vpc_zone_identifier     = [aws_subnet.public_subnet[0].id]
 
     tag {
         key                 = "ASG"
         value               = "my-asg"
         propagate_at_launch = true
     }
+    lifecycle {
+        create_before_destroy = true
+    }
+    target_group_arns = [aws_lb_target_group.my_target_group.arn]
+    depends_on = [
+        aws_lb_target_group.my_target_group,
+        aws_autoscaling_group.asg
+    ]
 }
 
 // Scale-up policy
@@ -63,21 +91,6 @@ resource "aws_autoscaling_policy" "scale_up_policy" {
     cooldown               = 60
 }
 
-resource "aws_cloudwatch_metric_alarm" "cpu_high" {
-    alarm_name          = "cpu-high"
-    comparison_operator = "GreaterThanOrEqualToThreshold"
-    evaluation_periods  = 2
-    metric_name         = "CPUUtilization"
-    namespace           = "AWS/EC2"
-    period              = 120
-    statistic           = "Average"
-    threshold           = 5
-    dimensions = {
-        AutoScalingGroupName = aws_autoscaling_group.asg.name
-    }
-    alarm_actions = [aws_autoscaling_policy.scale_up_policy.arn]
-}
-
 // Scale-down policy
 
 resource "aws_autoscaling_policy" "scale_down_policy" {
@@ -85,23 +98,8 @@ resource "aws_autoscaling_policy" "scale_down_policy" {
     policy_type            = "SimpleScaling"
     autoscaling_group_name = aws_autoscaling_group.asg.name
     adjustment_type        = "ChangeInCapacity"
-    scaling_adjustment     = 1
+    scaling_adjustment     = -1
     cooldown               = 60
-}
-
-resource "aws_cloudwatch_metric_alarm" "cpu_low" {
-    alarm_name          = "cpu-low"
-    comparison_operator = "LessThanOrEqualToThreshold"
-    evaluation_periods  = 2
-    metric_name         = "CPUUtilization"
-    namespace           = "AWS/EC2"
-    period              = 120
-    statistic           = "Average"
-    threshold           = 3
-    dimensions = {
-        AutoScalingGroupName = aws_autoscaling_group.asg.name
-    }
-    alarm_actions = [aws_autoscaling_policy.scale_down_policy.arn]
 }
 
 resource "aws_autoscaling_attachment" "autoscalingattachment" {

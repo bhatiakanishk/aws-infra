@@ -37,7 +37,7 @@ terraform init
 Create and execution plan by running the following command:
 
 ```
-terraform plan
+terraform plan --var-file="variable.tfvars"
 ```
 
 ## Variables file
