@@ -12,7 +12,6 @@ data "aws_route53_zone" "selected" {
 resource "aws_route53_record" "root" {
   zone_id   = data.aws_route53_zone.selected.zone_id
   name      = data.aws_route53_zone.selected.name
-  type      = "A"
   count     = 1
   alias {
     name                    = aws_lb.my_lb.dns_name
