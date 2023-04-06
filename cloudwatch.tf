@@ -11,6 +11,8 @@ resource "aws_iam_role_policy_attachment" "attachCloudWatchAgentPolicy" {
     policy_arn = data.aws_iam_policy.CloudWatchAgentServerPolicy.arn
 }
 
+// CPU low alarm
+
 resource "aws_cloudwatch_metric_alarm" "cpu_low" {
     alarm_name          = "cpu-low"
     comparison_operator = "LessThanOrEqualToThreshold"
@@ -19,12 +21,14 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
     namespace           = "AWS/EC2"
     period              = 120
     statistic           = "Average"
-    threshold           = 25
+    threshold           = 6
     dimensions = {
         AutoScalingGroupName = aws_autoscaling_group.asg.name
     }
     alarm_actions = [aws_autoscaling_policy.scale_down_policy.arn]
 }
+
+// CPU high alarm
 
 resource "aws_cloudwatch_metric_alarm" "cpu_high" {
     alarm_name          = "cpu-high"
@@ -34,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
     namespace           = "AWS/EC2"
     period              = 120
     statistic           = "Average"
-    threshold           = 40
+    threshold           = 20
     dimensions = {
         AutoScalingGroupName = aws_autoscaling_group.asg.name
     }

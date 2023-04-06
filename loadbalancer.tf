@@ -16,7 +16,7 @@ resource "aws_security_group" "loadbalancer" {
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    ingress {
+    egress {
         from_port   = 8080
         to_port     = 8080
         protocol    = "tcp"
@@ -26,6 +26,8 @@ resource "aws_security_group" "loadbalancer" {
 output "loadbalancer_sg_id" {
     value = aws_security_group.loadbalancer.id
 }
+
+// Load Balancer
 
 resource "aws_lb" "my_lb" {
     name                        = "my-lb"
@@ -39,6 +41,8 @@ resource "aws_lb" "my_lb" {
     }
 }
 
+// Load Balancer Target Group
+
 resource "aws_lb_target_group" "my_target_group" {
     name        = "my-target-group"
     port        = 8080
@@ -49,13 +53,16 @@ resource "aws_lb_target_group" "my_target_group" {
         path                    = "/healthcheck"
         protocol                = "HTTP"
         port                    = 8080
-        timeout                 = 30
+        timeout                 = 45
         healthy_threshold       = 3
         unhealthy_threshold     = 5
+        matcher                 = 200
     }
 }
 
-resource "aws_lb_listener" "lblistner" {
+// Load Balancer Listener to forward from port 80
+
+resource "aws_lb_listener" "lblistener" {
     load_balancer_arn   = aws_lb.my_lb.arn
     port                = 80
     protocol            = "HTTP"
