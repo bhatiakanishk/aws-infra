@@ -79,19 +79,11 @@ terraform destroy --var-file="variable.tfvars" --auto-approve
 
 Login to the AWS account and go to the VPC tab to check the infrastructure
 
-## AWS Instances Console
-
-Copy the Public IPv4 DNS to check the API requests
-
 ## Postman
 
 Postman needs to be installed for testing the API calls
 ```
-http://{Public IPv4 address}:8080/{requiredRequest}
-
-or
-
-http://{domainName.tld}:8080/{requiredRequest}
+http://{domainName.tld}/{requiredRequest}
 ```
 
 Depending on the type of API call, change the HTTP requests
@@ -128,9 +120,3 @@ To upload an image:
 2. Change the key type to "file"
 
 3. Type "image" in the key and select the file to be uploaded in the value
-
-## To SSH into local machine
-
-```
-ssh -i ~/.ssh/ec2 ec2-user@{Public IPv4 address}
-```

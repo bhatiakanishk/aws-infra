@@ -11,6 +11,8 @@ variable "sql_password" {
     default = "Kanu1327"
 }
 
+// User data template file
+
 data "template_file" "user_data" {
     template = <<EOF
 #!/bin/bash
@@ -32,11 +34,11 @@ EOF
 
 // Autoscaling Launch Configuration
 
-resource "aws_launch_template" "asg_launch_config" {
+resource "aws_launch_template" "asg_launch_template" {
     image_id                    = var.ami_id
     instance_type               = "t2.micro"
     key_name                    = "ec2-instance"
-    user_data = base64encode(data.template_file.user_data.rendered)
+    user_data                   = base64encode(data.template_file.user_data.rendered)
     iam_instance_profile {
         name = aws_iam_instance_profile.instance_profile_s3.name
     }
@@ -44,20 +46,15 @@ resource "aws_launch_template" "asg_launch_config" {
         associate_public_ip_address = true
         security_groups             = [aws_security_group.app_security_group.id]
     }
-    block_device_mappings {
-        device_name = "/dev/sda1"
-        ebs {
-            volume_size             = 50
-            volume_type             = "gp2"
-            delete_on_termination   = true
-        }
-    }
 }
+
+// Autoscaling Group
 
 resource "aws_autoscaling_group" "asg" {
     name                    = "my-asg"
+    health_check_type       = "EC2"
     launch_template {
-        id          = aws_launch_template.asg_launch_config.id
+        id          = aws_launch_template.asg_launch_template.id
         version     = "$Latest"
     }
     min_size                = 1
@@ -74,10 +71,7 @@ resource "aws_autoscaling_group" "asg" {
         create_before_destroy = true
     }
     target_group_arns = [aws_lb_target_group.my_target_group.arn]
-    depends_on = [
-        aws_lb_target_group.my_target_group,
-        aws_autoscaling_group.asg
-    ]
+    depends_on = [aws_lb_target_group.my_target_group]
 }
 
 // Scale-up policy
@@ -101,6 +95,8 @@ resource "aws_autoscaling_policy" "scale_down_policy" {
     scaling_adjustment     = -1
     cooldown               = 60
 }
+
+// Autoscaling attachment
 
 resource "aws_autoscaling_attachment" "autoscalingattachment" {
     autoscaling_group_name  = aws_autoscaling_group.asg.id
