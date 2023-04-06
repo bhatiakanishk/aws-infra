@@ -2,7 +2,6 @@
 variable "database_engine" {
   default = "mariadb"
 }
-
 variable "database_engine_version" {
   default = "10.5"
 }

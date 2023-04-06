@@ -1,3 +1,5 @@
+// App Security Group
+
 resource "aws_security_group" "app_security_group" {
   name_prefix = "app-security-group"
   vpc_id      = aws_vpc.my_vpc.id
