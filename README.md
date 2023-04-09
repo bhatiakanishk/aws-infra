@@ -83,7 +83,7 @@ Login to the AWS account and go to the VPC tab to check the infrastructure
 
 Postman needs to be installed for testing the API calls
 ```
-http://{domainName.tld}/{requiredRequest}
+https://{domainName.tld}/{requiredRequest}
 ```
 
 Depending on the type of API call, change the HTTP requests
