@@ -46,6 +46,16 @@ resource "aws_launch_template" "asg_launch_template" {
         associate_public_ip_address = true
         security_groups             = [aws_security_group.app_security_group.id]
     }
+    block_device_mappings {
+        device_name = "/dev/sdb"
+        ebs {
+            volume_type = "gp2"
+            volume_size = 20
+            delete_on_termination = true
+            encrypted = true
+            kms_key_id = aws_kms_key.ebs_encryption_key.arn
+        }
+    }
 }
 
 // Autoscaling Group

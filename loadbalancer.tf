@@ -60,12 +60,13 @@ resource "aws_lb_target_group" "my_target_group" {
     }
 }
 
-// Load Balancer Listener to forward from port 80
+// Load Balancer Listener to forward from port 443
 
 resource "aws_lb_listener" "lblistener" {
     load_balancer_arn   = aws_lb.my_lb.arn
-    port                = 80
-    protocol            = "HTTP"
+    port                = 443
+    protocol            = "HTTPS"
+    certificate_arn     = "arn:aws:acm:us-east-1:005631255075:certificate/3234e110-13dd-443c-9609-017ae85a6bb5"
     default_action {
         type = "forward"
         target_group_arn = aws_lb_target_group.my_target_group.arn
