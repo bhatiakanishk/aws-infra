@@ -1,3 +1,4 @@
+// AWS KMS Key for EBS Encryprtion
 resource "aws_kms_key" "ebs_encryption_key" {
     description             = "Key for EBS Encryption"
     enable_key_rotation     = true
@@ -36,6 +37,7 @@ resource "aws_kms_key" "ebs_encryption_key" {
     })
 }
 
+// AWS KMS Key for RDS Encryprtion
 resource "aws_kms_key" "rds_encryption_key" {
     description             = "Key for RDS Encryption"
     enable_key_rotation     = true

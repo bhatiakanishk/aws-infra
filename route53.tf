@@ -7,7 +7,7 @@ data "aws_route53_zone" "selected" {
   private_zone = false
 }
 
-// # Creates a Route53 A record for the root domain using an ALB alias
+// Creates a Route53 A record for the root domain using an ALB alias
 
 resource "aws_route53_record" "root" {
   zone_id   = data.aws_route53_zone.selected.zone_id

@@ -1,10 +1,12 @@
 # Define the availability zones to use
+
 variable "availability_zones" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 # Create VPCs
+
 resource "aws_vpc" "my_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -15,7 +17,9 @@ resource "aws_vpc" "my_vpc" {
 }
 
 # Create subnets in VPC
+
 # Create public subnets in 3 availability zones
+
 resource "aws_subnet" "public_subnet" {
   count             = 3
   cidr_block        = "10.0.${count.index}.0/24"
@@ -28,6 +32,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 # Create private subnets in 3 availability zones
+
 resource "aws_subnet" "private_subnet" {
   count             = 3
   cidr_block        = "10.0.${count.index + 10}.0/24"
@@ -49,6 +54,7 @@ resource "aws_internet_gateway" "my_igw" {
 }
 
 # Create public route table and associate it with public subnets
+
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.my_vpc.id
 
@@ -69,6 +75,7 @@ resource "aws_route_table_association" "public_rta" {
 }
 
 # Create private route table and associate it with private subnets
+
 resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.my_vpc.id
 

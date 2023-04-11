@@ -1,4 +1,5 @@
 # Define the database engine and version
+
 variable "database_engine" {
   default = "mariadb"
 }
@@ -16,6 +17,7 @@ variable "database_password" {
 }
 
 # Create a new DB parameter group
+
 resource "aws_db_parameter_group" "db_parameter_group" {
   name        = "csye6225-db-parameter-group"
   family      = "mariadb${var.database_engine_version}"
@@ -23,6 +25,7 @@ resource "aws_db_parameter_group" "db_parameter_group" {
 }
 
 # Create a new subnet group containing the private subnets where you want to deploy your RDS instance
+
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "csye6225-db-subnet-group"
   subnet_ids = aws_subnet.private_subnet.*.id
@@ -49,6 +52,7 @@ resource "aws_security_group" "database_security_group" {
 }
 
 # Create the RDS instance
+
 resource "aws_db_instance" "rds_instance" {
   identifier              = "csye6225"
   allocated_storage       = 5

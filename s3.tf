@@ -1,4 +1,5 @@
 // Create private S3 bucket
+
 resource "aws_s3_bucket" "private_bucket" {
   bucket = "private-bucket-${random_id.random.hex}"
   acl    = "private"
@@ -12,7 +13,8 @@ resource "aws_s3_bucket" "private_bucket" {
     }
   }
 
-  // Configures server-side encryption with AES256 for the S3 bucket.
+  // Configures server-side encryption with AES256 for the S3 bucket
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -28,6 +30,7 @@ resource "random_id" "random" {
 }
 
 // Block public access for S3
+
 resource "aws_s3_bucket_public_access_block" "private_bucket_block" {
   bucket                  = aws_s3_bucket.private_bucket.id
   block_public_acls       = true
@@ -37,6 +40,7 @@ resource "aws_s3_bucket_public_access_block" "private_bucket_block" {
 }
 
 // Create IAM Policy
+
 resource "aws_iam_policy" "s3_access_policy" {
   name = "WebAppS3"
   policy = jsonencode({
@@ -60,6 +64,7 @@ resource "aws_iam_policy" "s3_access_policy" {
 }
 
 // Create IAM Role
+
 resource "aws_iam_role" "ec2_instance_role" {
   name = "EC2-CSYE6225"
   assume_role_policy = jsonencode({

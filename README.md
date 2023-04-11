@@ -120,3 +120,11 @@ To upload an image:
 2. Change the key type to "file"
 
 3. Type "image" in the key and select the file to be uploaded in the value
+
+## Import SSL certificate
+
+```
+aws acm import-certificate --certificate fileb://certificate.pem \
+      --certificate-chain fileb://certificatechain.pem \
+      --private-key fileb://privatekey.pem
+```
