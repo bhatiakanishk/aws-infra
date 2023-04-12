@@ -23,6 +23,11 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Initialize terraform
+        id: init
+        run: terraform init
+        continue-on-error: true
+
+      - name: Destroy terraform
         id: destroy
         run: terraform destroy -auto-approve -input=false -var="confirm_destroy=true"
 
