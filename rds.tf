@@ -54,19 +54,19 @@ resource "aws_security_group" "database_security_group" {
 # Create the RDS instance
 
 resource "aws_db_instance" "rds_instance" {
-  identifier              = "csye6225"
-  allocated_storage       = 5
-  engine                  = var.database_engine
-  engine_version          = var.database_engine_version
-  instance_class          = "db.t3.micro"
-  name                    = var.database_name
-  username                = var.database_username
-  password                = var.database_password
-  db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
-  parameter_group_name    = aws_db_parameter_group.db_parameter_group.name
-  vpc_security_group_ids  = [aws_security_group.database_security_group.id]
-  publicly_accessible     = false
-  skip_final_snapshot     = true
-  storage_encrypted       = true
-  kms_key_id              = aws_kms_key.rds_encryption_key.arn
+  identifier             = "csye6225"
+  allocated_storage      = 5
+  engine                 = var.database_engine
+  engine_version         = var.database_engine_version
+  instance_class         = "db.t3.micro"
+  name                   = var.database_name
+  username               = var.database_username
+  password               = var.database_password
+  db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
+  parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
+  vpc_security_group_ids = [aws_security_group.database_security_group.id]
+  publicly_accessible    = false
+  skip_final_snapshot    = true
+  storage_encrypted      = true
+  kms_key_id             = aws_kms_key.rds_encryption_key.arn
 }
