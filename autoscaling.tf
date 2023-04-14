@@ -30,6 +30,7 @@ EOF
 // Autoscaling Launch Configuration
 
 resource "aws_launch_template" "asg_launch_template" {
+  name = "my-launch-template"
   image_id      = data.aws_ami.latest_ami.id
   instance_type = "t2.micro"
   key_name      = "ec2-instance"
